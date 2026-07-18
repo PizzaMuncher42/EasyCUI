@@ -1,7 +1,7 @@
 # EasyCUI (PLEASE NOTE THAT THIS PROJECT IS UNFINISHED)
 EasyCUI (also known as Easy Cheat User Interface) is a new open source UI Module for luau Cheats made for easy compatibility and generally just a project i wanted to work on
 
-Main Loader : require(loadstring(game:HttpGet("https://raw.githubusercontent.com/PizzaMuncher42/EasyCUI/refs/heads/main/MainLoader", true)))() 
+Main Loader : loadstring(game:HttpGet("https://raw.githubusercontent.com/PizzaMuncher42/EasyCUI/refs/heads/main/MainLoader", true))()
 
 
 ## Functions/Lists
