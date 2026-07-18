@@ -35,8 +35,8 @@ function CreateUI.Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable
 	UIs.Main = CreateUIPrivate.CreateFrame(Configs.ScreenGUI, Size, true)
 	UIs.Main.Position = Position
 	UIs.Main.AnchorPoint = Vector2.new(0.5, 0.5)
-	UIs.Drag = Instance.new('UIDragDetector', UIs.Main)
 	
+	if Draggable then UIs.Drag = Instance.new('UIDragDetector', UIs.Main) end
 	if UIAspectRatio then UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Main) end
 	
 	UIs.Inner = CreateUIPrivate.CreateFrame(UIs.Main, UDim2.new(0.96, 0, 0.95, 0), true)
