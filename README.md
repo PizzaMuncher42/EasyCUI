@@ -6,11 +6,11 @@ Main Loader : loadstring(game:HttpGet("https://raw.githubusercontent.com/PizzaMu
 
 ## Functions/Lists
 <details>
-<summary>.CreateUI:Main(Position(Udim2), Size(Udim2), Title (String), AspectRatio (Boolean))</summary>
+<summary>.CreateUI.Main(Position(Udim2), Size(Udim2), Title (String), AspectRatio (Boolean))</summary>
 
 Creates the main UI
 
-This will also have .Background, .Stroke, .Title, .Line, .Drag and .AspectRatio
+This will also have ().Background, ().Stroke, ().Title, ().Line, ().Drag and ().AspectRatio
 
 </details>
 <details>
