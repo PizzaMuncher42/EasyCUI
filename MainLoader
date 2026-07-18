@@ -9,7 +9,7 @@ Configs.Colors = {
 	Stroke = Color3.fromRGB(88, 88, 88),
 	Gradient = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 4, 4))}),
 }
-Configs.ScreenGUI = Instance.new('ScreenGui', Services.Players.LocalPlayer.PlayerGui)
+Configs.ScreenGUI = Instance.new('ScreenGui', Services.CoreGUI or Services.Players.LocalPlayer.PlayerGui)
 -- Private UI Functions
 local CreateUIPrivate = {}
 function CreateUIPrivate.AddDefaults(Frame:Frame)
