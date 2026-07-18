@@ -5,25 +5,38 @@ local Services = {
 }
 
 local Configs = {}
+Configs.Font = Enum.Font.Highway
 Configs.Colors = {
 	Stroke = Color3.fromRGB(88, 88, 88),
 	Gradient = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 4, 4))}),
 }
-Configs.ScreenGUI = Instance.new('ScreenGui', Services.CoreGUI or Services.Players.LocalPlayer.PlayerGui)
+Configs.ScreenGUI = Instance.new('ScreenGui', Services.Players.LocalPlayer.PlayerGui)
 -- Private UI Functions
 local CreateUIPrivate = {}
-function CreateUIPrivate.AddDefaults(Frame:Frame)
+function CreateUIPrivate.AddDefaults (Frame:Frame)
 	local DefaultUI = {}
 	DefaultUI.Stroke = Instance.new('UIStroke',Frame)
 	DefaultUI.Stroke.Color = Configs.Colors.Stroke
+	DefaultUI.Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	DefaultUI.Gradient = Instance.new('UIGradient', Frame)
 	DefaultUI.Gradient.Color = Configs.Colors.Gradient
 	DefaultUI.Gradient.Rotation = 90
 end
-function CreateUIPrivate.CreateFrame (Parent, Size:UDim2, Default:BoolValue)
+function CreateUIPrivate.CreateFrame (Parent, Size:UDim2, Position:UDim2, Default:BoolValue)
 	local Main = Instance.new('Frame', Parent)
 	Main.Size = Size
+	Main.Position = Position
 	Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	if Default then CreateUIPrivate.AddDefaults(Main) end
+	return Main
+end
+function CreateUIPrivate.TextLabel (Parent, Size:UDim2, Position:UDim2, Default:BoolValue)
+	local Main = Instance.new('TextLabel', Parent)
+	Main.Size = Size
+	Main.Position = Position
+	Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Main.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Main.Font = Enum.Font.Highway
 	if Default then CreateUIPrivate.AddDefaults(Main) end
 	return Main
 end
@@ -32,15 +45,13 @@ local CreateUI = {}
 local CreatedUI = {}
 function CreateUI.Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable:BoolValue, UIAspectRatio:BoolValue)
 	local UIs = {}
-	UIs.Main = CreateUIPrivate.CreateFrame(Configs.ScreenGUI, Size, true)
-	UIs.Main.Position = Position
+	UIs.Main = CreateUIPrivate.CreateFrame(Configs.ScreenGUI, Size, Position, true)
 	UIs.Main.AnchorPoint = Vector2.new(0.5, 0.5)
 	
 	if Draggable then UIs.Drag = Instance.new('UIDragDetector', UIs.Main) end
 	if UIAspectRatio then UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Main) end
 	
-	UIs.Inner = CreateUIPrivate.CreateFrame(UIs.Main, UDim2.new(0.96, 0, 0.95, 0), true)
-	UIs.Inner.Position = UDim2.new(0.5, 0, 0.5, 0)
+	UIs.Inner = CreateUIPrivate.CreateFrame(UIs.Main, UDim2.new(0.96, 0, 0.95, 0), UDim2.new(0.5, 0, 0.5, 0), true)
 	UIs.Inner.AnchorPoint = Vector2.new(0.5, 0.48)
 	
 	UIs.Title = Instance.new('TextLabel', UIs.Inner)
@@ -61,6 +72,35 @@ function CreateUI.Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable
 	
 	CreatedUI[#CreatedUI] = UIs
 	
+	return UIs
+end
+function CreateUI.SetChannels (Frame:Frame)
+	local UIs = {}
+	UIs.ChannelLists = {}
+	
+	UIs.Channels = CreateUIPrivate.CreateFrame(Frame, UDim2.new(1, 0, 0.045, -2), UDim2.new(0.5, 0, 0.005, 0), true)
+	UIs.Channels.AnchorPoint = Vector2.new(0.5, 0)
+	UIs.Channels.BackgroundTransparency = 1
+	
+	UIs.ListLayout = Instance.new('UIListLayout', UIs.Channels)
+	UIs.ListLayout.FillDirection = Enum.FillDirection.Horizontal
+	UIs.ListLayout.Padding = UDim.new(0.02, 0)
+	UIs.ListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+	UIs.ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	
+	function UIs.AddChannel (Subtitle:StringValue, Page)
+		local Channel = CreateUIPrivate.TextLabel(UIs.Channels, UDim2.new((1 - #UIs.ChannelLists*0.1)/(#UIs.ChannelLists + 1), 0, 1, 0), UDim2.new(0, 0, 0, 0), true)
+		Channel.Text = Subtitle
+		Channel.BackgroundTransparency = 1
+		Channel.TextScaled = true
+		Channel.UIGradient:Destroy()
+		
+		UIs.ChannelLists[#UIs.ChannelLists + 1] = Channel
+		
+		for _,Channel in pairs(UIs.ChannelLists) do
+			Channel.Size = UDim2.new((1 - 0.02 * (#UIs.ChannelLists - 1))/#UIs.ChannelLists, 0, 0.9, 0)
+		end
+	end
 	return UIs
 end
 
