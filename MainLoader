@@ -9,10 +9,10 @@ Configs.Colors = {
 	Stroke = Color3.fromRGB(88, 88, 88),
 	Gradient = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 4, 4))}),
 }
-Configs.ScreenGUI = Instance.new('ScreenGui', Services.CoreGUI)
+Configs.ScreenGUI = Instance.new('ScreenGui', Services.Players.LocalPlayer.PlayerGui)
 -- Private UI Functions
 local CreateUIPrivate = {}
-function CreateUIPrivate:AddDefaults(Frame:Frame)
+function CreateUIPrivate.AddDefaults(Frame:Frame)
 	local DefaultUI = {}
 	DefaultUI.Stroke = Instance.new('UIStroke',Frame)
 	DefaultUI.Stroke.Color = Configs.Colors.Stroke
@@ -20,32 +20,32 @@ function CreateUIPrivate:AddDefaults(Frame:Frame)
 	DefaultUI.Gradient.Color = Configs.Colors.Gradient
 	DefaultUI.Gradient.Rotation = 90
 end
-function CreateUIPrivate:CreateFrame (Parent, Size:UDim2, Default:BoolValue)
+function CreateUIPrivate.CreateFrame (Parent, Size:UDim2, Default:BoolValue)
 	local Main = Instance.new('Frame', Parent)
 	Main.Size = Size
 	Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	if Default then CreateUIPrivate:AddDefaults(Main) end
+	if Default then CreateUIPrivate.AddDefaults(Main) end
 	return Main
 end
 -- MainUI Functions
 local CreateUI = {}
 local CreatedUI = {}
-function CreateUI:Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable:BoolValue, UIAspectRatio:BoolValue)
+function CreateUI.Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable:BoolValue, UIAspectRatio:BoolValue)
 	local UIs = {}
-	UIs.Background = CreateUIPrivate:CreateFrame(Configs.ScreenGUI, Size, true)
-	UIs.Background.Position = Position
-	UIs.Background.AnchorPoint = Vector2.new(0.5, 0.5)
-	UIs.Drag = Instance.new('UIDragDetector', UIs.Background)
+	UIs.Main = CreateUIPrivate.CreateFrame(Configs.ScreenGUI, Size, true)
+	UIs.Main.Position = Position
+	UIs.Main.AnchorPoint = Vector2.new(0.5, 0.5)
+	UIs.Drag = Instance.new('UIDragDetector', UIs.Main)
 	
-	if UIAspectRatio then UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Background) end
+	if UIAspectRatio then UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Main) end
 	
-	UIs.Inner = CreateUIPrivate:CreateFrame(UIs.Background, UDim2.new(0.96, 0, 0.95, 0), true)
+	UIs.Inner = CreateUIPrivate.CreateFrame(UIs.Main, UDim2.new(0.96, 0, 0.95, 0), true)
 	UIs.Inner.Position = UDim2.new(0.5, 0, 0.5, 0)
 	UIs.Inner.AnchorPoint = Vector2.new(0.5, 0.48)
 	
 	UIs.Title = Instance.new('TextLabel', UIs.Inner)
 	UIs.Title.Size = UDim2.new(0.5, 0, 0.04, 0)
-	UIs.Title.Position = UDim2.new(0.01, 0, 0.002, 0)
+	UIs.Title.Position = UDim2.new(0.01, 0, -0.002, 0)
 	UIs.Title.AnchorPoint = Vector2.new(0, 1)
 	UIs.Title.TextScaled = true
 	UIs.Title.BackgroundTransparency = 1
