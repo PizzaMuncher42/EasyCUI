@@ -37,7 +37,7 @@ function CreateUI:Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable
 	UIs.Background.AnchorPoint = Vector2.new(0.5, 0.5)
 	UIs.Drag = Instance.new('UIDragDetector', UIs.Background)
 	
-	UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Background)
+	if UIAspectRatio then UIs.UIAspectRatio = Instance.new('UIAspectRatioConstraint', UIs.Background) end
 	
 	UIs.Inner = CreateUIPrivate:CreateFrame(UIs.Background, UDim2.new(0.96, 0, 0.95, 0), true)
 	UIs.Inner.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -45,7 +45,7 @@ function CreateUI:Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable
 	
 	UIs.Title = Instance.new('TextLabel', UIs.Inner)
 	UIs.Title.Size = UDim2.new(0.5, 0, 0.04, 0)
-	UIs.Position = UDim2.new(0.01, 0, 0.002, 0)
+	UIs.Title.Position = UDim2.new(0.01, 0, 0.002, 0)
 	UIs.Title.AnchorPoint = Vector2.new(0, 1)
 	UIs.Title.TextScaled = true
 	UIs.Title.BackgroundTransparency = 1
@@ -58,6 +58,8 @@ function CreateUI:Main (Position:UDim2, Size:UDim2, Title:StringValue, Draggable
 	UIs.Line.Size = UDim2.new(1, 0, 0, 1)
 	UIs.Line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 	UIs.Line.BorderSizePixel = 0
+	
+	CreatedUI[#CreatedUI] = UIs
 	
 	return UIs
 end
