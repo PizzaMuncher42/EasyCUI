@@ -10,11 +10,12 @@ Main Loader : require(loadstring(game:HttpGet("https://raw.githubusercontent.com
 
 Creates the main UI
 
+This will also have .Background, .Stroke, .Title, .Line, .Drag and .AspectRatio
+
 </details>
 <details>
 <summary>.CreatedUI</summary>
 
 List of all Created UI
-This will also have .Background, .Stroke, .Title, .Line, .Drag and .AspectRatio
 
 </details>
