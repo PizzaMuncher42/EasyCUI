@@ -1,0 +1,39 @@
+local Services = {
+	CoreGui = game:GetService('CoreGui'),
+	Players = game:GetService('Players'),
+	HttpService = game:GetService('HttpService')
+}
+
+local PrivateLib = {}
+
+function PrivateLib.Create (Object, Properties, Parent)
+	local ToReturn = Instance.new(Object, Parent)
+	for Property, Value in Properties do ToReturn[Property] = Value end
+	print(Object.. 'Is in '.. ToReturn.Parent.Name)
+	return ToReturn
+end
+
+local Library = {}
+
+function Library.new (Name)
+	
+	print('Started'.. Name)
+	
+	local ToReturn = {}
+	ToReturn.ScreenUI = PrivateLib.Create('ScreenGui', {Name = Services.HttpService:GenerateGUID(false)}, Services.Players.LocalPlayer.PlayerGui)
+	PrivateLib.Create('StringValue', {Name = 'MADE BY PizzaMuncher42 ON GITHUB', Value = Name}, ToReturn.ScreenUI)
+	ToReturn.Frames = {}
+	
+	ToReturn.Frames.Main = PrivateLib.Create('ImageLabel', {Image = 'rbxassetid://7300333488', Size = UDim2.new(0.5, 0, 0.5, 0), Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)}, ToReturn.ScreenUI)
+	PrivateLib.Create('UIAspectRatioConstraint', {AspectRatio = 1.4}, ToReturn.Frames.Main)
+	PrivateLib.Create('UIDragDetector', {}, ToReturn.Frames.Main)
+	
+	ToReturn.Frames.Title = PrivateLib.Create('TextLabel', {Size = UDim2.new(0.956, 0, 0.032, 0), Position = UDim2.new(0.5, 0, 0.03, 0), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1, TextColor3 = Color3.new(1, 1, 1), TextSize = 14, Font = Enum.Font.Ubuntu, TextXAlignment = Enum.TextXAlignment.Left, Text = Name}, ToReturn.Frames.Main)
+	
+	ToReturn.Frames.Tabs = PrivateLib.Create('Frame', {Size = UDim2.new(0.109, 0, 0.894, 0), Position = UDim2.new(0.017, 0, 0.082, 0), Transparency = 0.5}, ToReturn.Frames.Main)
+	ToReturn.Frames.DisplayTab = PrivateLib.Create('Frame', {Size = UDim2.new(0.837, 0, 0.892, 0), Position = UDim2.new(0.146, 0, 0.084, 0), Transparency = 0.5}, ToReturn.Frames.Main)
+	
+	ToReturn.Frames.SectionTabs = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0.056, 0), Transparency = 0.5}, ToReturn.Frames.DisplayTab)
+end
+
+return Library
