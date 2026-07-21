@@ -7,8 +7,9 @@ local Services = {
 local PrivateLib = {}
 
 function PrivateLib.Create (Object, Properties, Parent)
-	local ToReturn = Instance.new(Object, Parent)
+	local ToReturn = Instance.new(Object)
 	for Property, Value in Properties do ToReturn[Property] = Value end
+	ToReturn.Parent = Parent
 	print(Object.. 'Is in '.. ToReturn.Parent.Name)
 	return ToReturn
 end
@@ -24,7 +25,7 @@ function Library.new (Name)
 	PrivateLib.Create('StringValue', {Name = 'MADE BY PizzaMuncher42 ON GITHUB', Value = Name}, ToReturn.ScreenUI)
 	ToReturn.Frames = {}
 	
-	ToReturn.Frames.Main = PrivateLib.Create('ImageLabel', {Image = 'rbxassetid://7300333488', Size = UDim2.new(0.5, 0, 0.5, 0), Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)}, ToReturn.ScreenUI)
+	ToReturn.Frames.Main = PrivateLib.Create('ImageLabel', {Image = 'http://www.roblox.com/asset/?id=7300333488', Size = UDim2.new(0.5, 0, 0.5, 0), Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5)}, ToReturn.ScreenUI)
 	PrivateLib.Create('UIAspectRatioConstraint', {AspectRatio = 1.4}, ToReturn.Frames.Main)
 	PrivateLib.Create('UIDragDetector', {}, ToReturn.Frames.Main)
 	
