@@ -1,7 +1,8 @@
 local Services = {
 	CoreGui = game:GetService('CoreGui'),
 	Players = game:GetService('Players'),
-	HttpService = game:GetService('HttpService')
+	HttpService = game:GetService('HttpService'),
+	TweenService = game:GetService('TweenService')
 }
 
 local Configs = {}
@@ -29,7 +30,7 @@ function Library.new (Name)
 	print('Started'.. Name)
 
 	local ToReturn = {}
-	ToReturn.ScreenUI = PrivateLib.Create('ScreenGui', {Name = Services.HttpService:GenerateGUID(false)}, Services.Players.LocalPlayer.PlayerGui)
+	ToReturn.ScreenUI = PrivateLib.Create('ScreenGui', {Name = Services.HttpService:GenerateGUID(false), ZIndexBehavior = Enum.ZIndexBehavior.Sibling}, Services.Players.LocalPlayer.PlayerGui)
 	PrivateLib.Create('StringValue', {Name = 'MADE BY PizzaMuncher42 ON GITHUB', Value = Name}, ToReturn.ScreenUI)
 	ToReturn.Frames = {}
 
@@ -46,7 +47,7 @@ function Library.new (Name)
 	PrivateLib.Create('UIListLayout', {FillDirection = Enum.FillDirection.Horizontal, SortOrder = Enum.SortOrder.Name}, ToReturn.Frames.SectionTabs)
 	
 	ToReturn.Functions = {}
-	ToReturn.Sections = {Amount = 0, Selected = 1, Frames = {Sections = {}, Display = {}}}
+	ToReturn.Sections = {Amount = 0, Selected = 1, Frames = {Sections = {}, Displays = {}}}
 	
 	function ToReturn.Functions.AddSection (SubTitle)
 		
@@ -55,19 +56,51 @@ function Library.new (Name)
 		local Sector = {}
 		Sector.Button = PrivateLib.Create('TextButton', {BackgroundTransparency = 1, TextSize = 16, Name = Id, Font = Enum.Font.Ubuntu, Text = SubTitle}, ToReturn.Frames.SectionTabs)
 		Sector.Indicator = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1.1, 0), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0}, Sector.Button)
+		
+		local Display = {}
+		Display.Main = PrivateLib.Create('CanvasGroup', {Size = UDim2.new(1, 0, 0.93, 0), Position = UDim2.new(0, 0, 1, 0), AnchorPoint = Vector2.new(0, 1), BackgroundTransparency = 1}, ToReturn.Frames.DisplayTab)
+		Display.Left = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 1, 0), Transparency = 1}, Display.Main)
+		PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center}, Display.Left)
+		Display.Right = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 1, 0), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), Transparency = 1}, Display.Main)
+		PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center}, Display.Right)
+		
 		PrivateLib.Create('UIGradient', {Color = Configs.Colours.SectionGradient}, Sector.Indicator)
 		
 		ToReturn.Sections.Frames.Sections[Id] = Sector
+		ToReturn.Sections.Frames.Displays[Id] = Display
 		
 		for _, SSector in pairs(ToReturn.Sections.Frames.Sections) do SSector.Button.Size = UDim2.new(1/ToReturn.Sections.Amount, 0, 1, 0) end
 		
-		print(Id)
-		print(ToReturn.Sections.Selected)
-		
 		if Id == ToReturn.Sections.Selected then Sector.Button.TextColor3 = Configs.Colours.Selected; Sector.Indicator.Transparency = 0 else
 			Sector.Button.TextColor3 = Configs.Colours.UnSelected; Sector.Indicator.Transparency = 1 end
+		
+		
+		Sector.Button.MouseButton1Down:Connect(function()
+			
+			ToReturn.Sections.Selected = Id
+			
+			for Number = 1,ToReturn.Sections.Amount do
+				
+				local SSector = ToReturn.Sections.Frames.Sections[Number].Button
+				local Indicator = ToReturn.Sections.Frames.Sections[Number].Indicator
+				local Display = ToReturn.Sections.Frames.Displays[Number].Main
+				
+				if Number ~= Id then
+					
+					Services.TweenService:Create(SSector, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.UnSelected}):Play()
+					Services.TweenService:Create(Indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
+					Services.TweenService:Create(Display, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 1}):Play()
+					
+				else
+					
+					Services.TweenService:Create(SSector, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.Selected}):Play()
+					Services.TweenService:Create(Indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0}):Play()
+					Services.TweenService:Create(Display, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 0}):Play()
+					
+				end
+			end
+		end)
 	end
-	
 	return ToReturn
 end
 
