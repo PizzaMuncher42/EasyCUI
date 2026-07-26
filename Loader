@@ -44,18 +44,14 @@ function Library.new (Name)
 	PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center, SortOrder = Enum.SortOrder.Name}, ToReturn.Frames.Tabs)
 	ToReturn.Frames.DisplayTab = PrivateLib.Create('Frame', {Size = UDim2.new(0.837, 0, 0.892, 0), Position = UDim2.new(0.146, 0, 0.084, 0), BackgroundTransparency = 1}, ToReturn.Frames.Main)
 
-	ToReturn.Frames.SectionTabs = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0.056, 0), BackgroundTransparency = 1}, ToReturn.Frames.DisplayTab)
-	PrivateLib.Create('UIListLayout', {FillDirection = Enum.FillDirection.Horizontal, SortOrder = Enum.SortOrder.Name}, ToReturn.Frames.SectionTabs)
-	
 	ToReturn.Functions = {}
 	ToReturn.Tabs = {Amount = 0, Selected = 1, Frames = {Tabs = {}, Displays = {}}}
 	
 	function ToReturn.Functions.AddTab (Variable, Media)
-		
 		ToReturn.Tabs.Amount += 1
 		local Id = ToReturn.Tabs.Amount
 		local Tab = {}
-		local Sections = {Amount = 0, Selected = 1, Frames = {Sections = {}, Displays = {}}}
+		local Sections = {Amount = 0, Selected = 1, Frames = {Sections = {}, Containers = {}}}
 		if Media == 'Image' then Tab.Button = PrivateLib.Create('ImageButton', {Name = Id, Size = UDim2.new(0.9, 0, 0.9, 0), BackgroundTransparency = 1, Image = Variable}, ToReturn.Frames.Tabs)
 		elseif Media == 'Text' then Tab.Button = PrivateLib.Create('TextButton', {Name = Id, Size = UDim2.new(0.9, 0, 0.9, 0), BackgroundTransparency = 1, Font = Enum.Font.Ubuntu, TextScaled = true, Text = Variable}, ToReturn.Frames.Tabs) end
 		PrivateLib.Create('UIAspectRatioConstraint', {}, Tab.Button)
@@ -70,10 +66,12 @@ function Library.new (Name)
 		
 		if Id == ToReturn.Tabs.Selected then
 			Display.TabDisplay.Visible = true
+			Display.TabDisplay.GroupTransparency = 0
 			if Media == 'Text' then Tab.Button.TextColor3 = Configs.Colours.Selected
 			elseif Media == 'Image' then Tab.Button.ImageColor3 = Configs.Colours.Selected end
 		else
 			Display.TabDisplay.Visible = false
+			Display.TabDisplay.GroupTransparency = 1
 			if Media == 'Text' then Tab.Button.TextColor3 = Configs.Colours.UnSelected
 			elseif Media == 'Image' then Tab.Button.ImageColor3 = Configs.Colours.UnSelected end
 		end
@@ -84,66 +82,102 @@ function Library.new (Name)
 			
 			Sections.Amount += 1
 			local SId = Sections.Amount
-			local SSection = {}
-			SSection.Button = PrivateLib.Create('TextButton', {BackgroundTransparency = 1, TextSize = 16, Name = SId, Font = Enum.Font.Ubuntu, Text = SubTitle}, Display.SectionTab)
-			SSection.Indicator = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1.1, 0), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0}, SSection.Button)
+			local Section = {}
+			Section.Button = PrivateLib.Create('TextButton', {BackgroundTransparency = 1, TextSize = 16, Name = SId, Font = Enum.Font.Ubuntu, Text = SubTitle}, Display.SectionTab)
+			Section.Indicator = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1.1, 0), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0}, Section.Button)
 
-			local SDisplay = {}
-			SDisplay.Main = PrivateLib.Create('CanvasGroup', {Size = UDim2.new(1, 0, 0.9, 0), Position = UDim2.new(0, 0, 1, 0), AnchorPoint = Vector2.new(0, 1), BackgroundTransparency = 1}, Display.TabDisplay)
-			SDisplay.Left = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 1, 0)}, SDisplay.Main)
-			SDisplay.Right = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 1, 0), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0)}, SDisplay.Main)
+			local Container = {}
+			Container.Main = PrivateLib.Create('CanvasGroup', {Size = UDim2.new(1, 0, 0.934, 0), Position = UDim2.new(0, 0, 1, 0), AnchorPoint = Vector2.new(0, 1), BackgroundTransparency = 1}, Display.TabDisplay)
+			Container.Left = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 0.9, 0), Position = UDim2.new(0, 0, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), BackgroundTransparency = 1}, Container.Main)
+			PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center, Padding = UDim.new(0.1, 0)}, Container.Left)
+			Container.Right = PrivateLib.Create('Frame', {Size = UDim2.new(0.5, 0, 0.9, 0), Position = UDim2.new(1, 0, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), BackgroundTransparency = 1}, Container.Main)
+			PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center, Padding = UDim.new(0.1, 0)}, Container.Right)
 
-			PrivateLib.Create('UIGradient', {Color = Configs.Colours.SectionGradient}, SSection.Indicator)
+			PrivateLib.Create('UIGradient', {Color = Configs.Colours.SectionGradient}, Section.Indicator)
 
-			Sections.Frames.Sections[SId] = SSection
-			Sections.Frames.Displays[SId] = SDisplay
+			Sections.Frames.Sections[SId] = Section
+			Sections.Frames.Containers[SId] = Container
 
 			for _, CSection in pairs(Sections.Frames.Sections) do CSection.Button.Size = UDim2.new(1/Sections.Amount, 0, 1, 0) end
 
-			if SId == Sections.Selected then SSection.Button.TextColor3 = Configs.Colours.Selected; SSection.Indicator.Transparency = 0 else
-				SSection.Button.TextColor3 = Configs.Colours.UnSelected; SSection.Indicator.Transparency = 1 end
-			
-			SSection.Functions = {}
-			
-			function SSection.Functions.AddSector (Name)
-				
-				local Sector = {}
-				
+			if SId == Sections.Selected then
+				Container.Main.Visible = true
+				Container.Main.GroupTransparency = 0
+				Section.Button.TextColor3 = Configs.Colours.Selected
+				Section.Indicator.Transparency = 0
+			else
+				Container.Main.Visible = false
+				Container.Main.GroupTransparency = 1
+				Section.Button.TextColor3 = Configs.Colours.UnSelected
+				Section.Indicator.Transparency = 1
 			end
 			
-			SSection.Button.MouseButton1Down:Connect(function()
+			Section.Functions = {}
+			
+			function Section.Functions.AddSector (SectorName, Side)
+				local Sector = {}
+				Sector.Border = PrivateLib.Create('Frame', {Size = UDim2.new(0.9, 0, 0, 15), BackgroundColor3 = Color3.fromRGB(5, 5, 5), BorderColor3 = Color3.fromRGB(30, 30, 30)}, Container[Side])
+				Sector.Container = PrivateLib.Create('Frame', {Size = UDim2.new(1, -2, 1, -2), Position = UDim2.new(0.5, 0, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Color3.fromRGB(10, 10, 10), BorderSizePixel = 0}, Sector.Border)
+				PrivateLib.Create('UIListLayout', {HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center, SortOrder = Enum.SortOrder.Name, Padding = UDim.new(0, 5)}, Sector.Container)
+				Sector.Title = PrivateLib.Create('TextLabel', {Size = UDim2.new(1, 0, 0, 25), AnchorPoint = Vector2.new(0, 0.5, 0), BackgroundTransparency = 1, TextColor3 = Color3.new(1, 1, 1), TextSize = 16, ZIndex = 2, Font = Enum.Font.Ubuntu, Text = SectorName}, Sector.Border)
+				
+				Sector.AddElement = {}
+								
+				function Sector.AddElement.Toggle (Description, Default)
+					Sector.Border.Size += UDim2.new(0, 0, 0, 25)
+					
+					local Toggle = {}
+					Toggle.Container = PrivateLib.Create('Frame', {Size = UDim2.new(0.9, 0, 0, 20), Name = #Sector.Container:GetChildren(), BackgroundTransparency = 1}, Sector.Container)
+					Toggle.Button = PrivateLib.Create('TextButton', {Size = UDim2.new(0, 30, 1, 0), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(150, 150, 150), AutoButtonColor = false, Text = ""}, Toggle.Container)
+					Toggle.Description = PrivateLib.Create('TextLabel', {Size = UDim2.new(1, -60, 1, 0), Position = UDim2.new(0, 20, 0, 0), BackgroundTransparency = 1, TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Color3.new(1, 1, 1), TextSize = 14, Font = Enum.Font.Ubuntu, Text = Description}, Toggle.Container)
+					Toggle.Indicator = PrivateLib.Create('Frame', {Size = UDim2.new(0, 10, 0, 10), Position = UDim2.new(0, 0, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30)}, Toggle.Container)
+					Toggle.Value = Default
+					if Default then Toggle.Button.BackgroundColor3 = Configs.Colours.Selected end
+					
+					function Toggle.TweenValue () Services.TweenService:Create(Toggle.Button, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {BackgroundColor3 = Toggle.Value and Configs.Colours.Selected or Color3.fromRGB(150, 150, 150)}):Play() end
+					
+					function Toggle.SetValue (Value)
+						if Toggle.Value ~= Value then
+							Toggle.Value = Value
+							Toggle.TweenValue(Value)
+						end
+					end
+					
+					Toggle.Button.MouseButton1Down:Connect(function() Toggle.SetValue(not Toggle.Value) end)
+					
+					return Toggle
+				end
+				
+				return Sector
+			end
+			
+			Section.Button.MouseButton1Down:Connect(function()
 
 				Sections.Selected = SId
 
 				for Number = 1,Sections.Amount do
 
-					local SSection = Sections.Frames.Sections[Number].Button
+					local Section = Sections.Frames.Sections[Number].Button
 					local Indicator = Sections.Frames.Sections[Number].Indicator
-					local CDisplay = Sections.Frames.Displays[Number].Main
+					local CDisplay = Sections.Frames.Containers[Number].Main
 
 					if Number ~= SId then
-
-						Services.TweenService:Create(SSection, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.UnSelected}):Play()
+						Services.TweenService:Create(Section, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.UnSelected}):Play()
 						Services.TweenService:Create(Indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
 						Services.TweenService:Create(CDisplay, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 1}):Play()
 						task.delay(0.2, function() CDisplay.Visible = false end)
-
 					else
-
 						CDisplay.Visible = true
-						Services.TweenService:Create(SSection, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.Selected}):Play()
+						Services.TweenService:Create(Section, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.Selected}):Play()
 						Services.TweenService:Create(Indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0}):Play()
 						Services.TweenService:Create(CDisplay, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 0}):Play()
-
 					end
 				end
 			end)
-			return SSection
+			return Section
 		end
 		
 		Tab.Button.MouseButton1Down:Connect(function()
-			
-			print('Clicked')
 			
 			ToReturn.Tabs.Selected = Id
 			
@@ -153,21 +187,17 @@ function Library.new (Name)
 				local Display = ToReturn.Tabs.Frames.Displays[Number].TabDisplay
 
 				if Number ~= Id then
-
 					if Tab:IsA('TextButton') then Services.TweenService:Create(Tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.UnSelected}):Play()
 					elseif Tab:IsA('ImageButton') then Services.TweenService:Create(Tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {ImageColor3 = Configs.Colours.UnSelected}):Play() end
 					
 					Services.TweenService:Create(Display, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 1}):Play()
 					task.delay(0.2, function() Display.Visible = false end)
-
 				else
-
 					if Tab:IsA('TextButton') then Services.TweenService:Create(Tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {TextColor3 = Configs.Colours.Selected}):Play()
 					elseif Tab:IsA('ImageButton') then Services.TweenService:Create(Tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {ImageColor3 = Configs.Colours.Selected}):Play() end
 					
 					Display.Visible = true
 					Services.TweenService:Create(Display, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {GroupTransparency = 0}):Play()
-
 				end
 			end
 		end)
