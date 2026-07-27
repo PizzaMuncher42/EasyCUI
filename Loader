@@ -2,11 +2,14 @@ local Services = {
 	CoreGui = game:GetService('CoreGui'),
 	Players = game:GetService('Players'),
 	HttpService = game:GetService('HttpService'),
-	TweenService = game:GetService('TweenService')
+	TweenService = game:GetService('TweenService'),
+	UserInputService = game:GetService('UserInputService'),
+	RunService = game:GetService('RunService')
 }
 
 local Configs = {}
 
+Configs.Mouse = Services.Players.LocalPlayer:GetMouse()
 Configs.Colours = {}
 Configs.Colours.SectionGradient = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(24, 24, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(81, 97, 243)), ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 24, 24))})
 Configs.Colours.Selected = Color3.fromRGB(81, 97, 243)
@@ -53,7 +56,7 @@ function Library.new (Name)
 		local Tab = {}
 		local Sections = {Amount = 0, Selected = 1, Frames = {Sections = {}, Containers = {}}}
 		if Media == 'Image' then Tab.Button = PrivateLib.Create('ImageButton', {Name = Id, Size = UDim2.new(0.9, 0, 0.9, 0), BackgroundTransparency = 1, Image = Variable}, ToReturn.Frames.Tabs)
-		elseif Media == 'Text' then Tab.Button = PrivateLib.Create('TextButton', {Name = Id, Size = UDim2.new(0.9, 0, 0.9, 0), BackgroundTransparency = 1, Font = Enum.Font.Ubuntu, TextScaled = true, Text = Variable}, ToReturn.Frames.Tabs) end
+		elseif Media == 'Text' then Tab.Button = PrivateLib.Create('TextButton', {Name = Id, Size = UDim2.new(0.9, 0, 0.9, 0), BackgroundTransparency = 1, Font = Enum.Font.Ubuntu, TextSize = 20, Text = Variable}, ToReturn.Frames.Tabs) end
 		PrivateLib.Create('UIAspectRatioConstraint', {}, Tab.Button)
 		
 		local Display = {}
@@ -129,7 +132,7 @@ function Library.new (Name)
 					local Toggle = {}
 					Toggle.Container = PrivateLib.Create('Frame', {Size = UDim2.new(0.9, 0, 0, 20), Name = #Sector.Container:GetChildren(), BackgroundTransparency = 1}, Sector.Container)
 					Toggle.Button = PrivateLib.Create('TextButton', {Size = UDim2.new(0, 30, 1, 0), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(150, 150, 150), AutoButtonColor = false, Text = ""}, Toggle.Container)
-					Toggle.Description = PrivateLib.Create('TextLabel', {Size = UDim2.new(1, -60, 1, 0), Position = UDim2.new(0, 20, 0, 0), BackgroundTransparency = 1, TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Color3.new(1, 1, 1), TextSize = 14, Font = Enum.Font.Ubuntu, Text = Description}, Toggle.Container)
+					Toggle.Description = PrivateLib.Create('TextLabel', {Size = UDim2.new(1, -60, 1, 0), Position = UDim2.new(0, 20, 0, 0), BackgroundTransparency = 1, TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Color3.fromRGB(200, 200, 200), TextSize = 14, Font = Enum.Font.Ubuntu, Text = Description}, Toggle.Container)
 					Toggle.Indicator = PrivateLib.Create('Frame', {Size = UDim2.new(0, 10, 0, 10), Position = UDim2.new(0, 0, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30)}, Toggle.Container)
 					Toggle.Value = Default
 					Toggle.Event = Instance.new('BindableEvent')
@@ -140,7 +143,7 @@ function Library.new (Name)
 					function Toggle.SetValue(Value)
 						if Toggle.Value ~= Value then
 							Toggle.Value = Value
-							Toggle.Event:Fire()
+							Toggle.Event:Fire(Value)
 							Toggle.TweenValue()
 						end
 					end
@@ -148,6 +151,104 @@ function Library.new (Name)
 					Toggle.Button.MouseButton1Down:Connect(function() Toggle.SetValue(not Toggle.Value) end)
 					
 					return Toggle
+				end
+				
+				function Sector.AddElement.Slider (Description, Default)
+					Sector.Border.Size += UDim2.new(0, 0, 0, 35)
+					
+					local Slider = {}
+					Slider.Value = math.clamp(Default, 0, 100)
+					Slider.Container = PrivateLib.Create('Frame', {Size = UDim2.new(0.9, 0, 0, 30), Name = #Sector.Container:GetChildren(), BackgroundTransparency = 1}, Sector.Container)
+					Slider.SliderBackground = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 0, 10), Position = UDim2.new(0, 0, 1, 0), AnchorPoint = Vector2.new(0, 1), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30)}, Slider.Container)
+					Slider.SliderFrame = PrivateLib.Create('Frame', {Size = UDim2.new(Slider.Value/100, 0, 1, 0), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(81, 97, 243)}, Slider.SliderBackground)
+					Slider.SliderButton = PrivateLib.Create('TextButton', {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, TextTransparency = 1, ZIndex = 2}, Slider.SliderBackground)
+					Slider.Title = PrivateLib.Create('TextLabel', {Size = UDim2.new(0.5, 0, 0, 15), BackgroundTransparency = 1, TextSize = 14, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = Enum.TextXAlignment.Left, Font = Enum.Font.Ubuntu, Text = Description}, Slider.Container)
+					Slider.Indicator = PrivateLib.Create('TextLabel', {Size = UDim2.new(0.5, 0, 0, 15), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1, TextSize = 14, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = Enum.TextXAlignment.Right, Font = Enum.Font.Ubuntu, Text = Slider.Value}, Slider.Container)
+					Slider.Event = Instance.new('BindableEvent')
+				
+					function Slider.Update (Value)
+						local PreviousValue = Slider.Value
+						if Value ~= PreviousValue then
+							Slider.Event:Fire(Value*100)
+							Slider.Value = Value
+							Slider.Indicator.Text = math.floor(Value * 100)
+							Slider.SliderFrame.Size = UDim2.new(Value, 0, 1, 0)
+						end
+					end
+				
+					Slider.SliderButton.MouseButton1Down:Connect(function()
+						local Update = Services.RunService.RenderStepped:Connect(function() Slider.Update(math.clamp(((Configs.Mouse.X - Slider.SliderBackground.AbsolutePosition.X) / Slider.SliderBackground.AbsoluteSize.X),0,1)) end)
+						Services.UserInputService.InputEnded:Connect(function(Input) if Input.UserInputType == Enum.UserInputType.MouseButton1 then Update:Disconnect() end end)
+					end)
+					
+					return Slider
+				end
+				
+				function Sector.AddElement.Button (Description)
+					Sector.Border.Size += UDim2.new(0, 0, 0, 30)
+					
+					local Button = {}
+					Button.Button = PrivateLib.Create('TextButton', {Size = UDim2.new(0.9, 0, 0, 25), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(200, 200, 200), Name = #Sector.Container:GetChildren(), Font = Enum.Font.Ubuntu, TextSize = 14, Text = Description}, Sector.Container)
+					Button.Event = Instance.new('BindableEvent')
+					
+					Button.Button.MouseButton1Down:Connect(function() Button.Event:Fire() end)
+					return Button
+				end
+				
+				function Sector.AddElement.DropDown (Default, Options)
+					Sector.Border.Size += UDim2.new(0, 0, 0, 30)
+
+					local DropDown = {}
+					DropDown.Value = Default
+					DropDown.Container = PrivateLib.Create('Frame', {Size = UDim2.new(0.9, 0, 0, 25), BorderColor3 = Color3.new(0, 0, 0), BackgroundColor3 = Color3.fromRGB(30, 30, 30), Name = #Sector.Container:GetChildren()}, Sector.Container)
+					DropDown.Arrow = PrivateLib.Create('ImageLabel', {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(1, -5, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), Image = 'http://www.roblox.com/asset/?id=11552476728', BackgroundTransparency = 1}, DropDown.Container)
+					DropDown.Indicator = PrivateLib.Create('TextLabel', {Size = UDim2.new(0.8, 0, 1, 0), Position = UDim2.new(0.05, 0, 0, 0), TextColor3 = Color3.fromRGB(200, 200, 200), Font = Enum.Font.Ubuntu, BackgroundTransparency = 1, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Text = Default}, DropDown.Container)
+					DropDown.Button = PrivateLib.Create('TextButton', {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, TextTransparency = 1, ZIndex = 2}, DropDown.Container)
+					DropDown.OptionsContainer = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0, 0, 1, 0), BackgroundTransparency = 1, Visible = false}, DropDown.Container)
+					DropDown.OptionListLayout = PrivateLib.Create('UIListLayout', {Padding = UDim.new(-1, 0)}, DropDown.OptionsContainer)
+					DropDown.OptionsOpen = false
+					DropDown.Event = Instance.new('BindableEvent')
+					DropDown.Options = {}
+					
+					function DropDown.CloseOptions ()
+						DropDown.OptionsOpen = false
+						DropDown.OptionsContainer.Visible = false
+						Services.TweenService:Create(DropDown.Arrow, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Rotation = 0}):Play()
+					end
+					
+					function DropDown.OpenOptions ()
+						DropDown.OptionsOpen = true
+						DropDown.OptionsContainer.Visible = true
+						DropDown.OptionListLayout.Padding = UDim.new(-1, 0)
+						Services.TweenService:Create(DropDown.OptionListLayout, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Padding = UDim.new(0, 0)}):Play()
+						Services.TweenService:Create(DropDown.Arrow, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Rotation = 180}):Play()
+					end
+					
+					function DropDown.SetValue (Value)
+						DropDown.Value = Value
+						DropDown.Indicator.Text = Value
+					end
+					
+					for Id,OptionName in pairs(Options) do
+						local Option = {}
+						Option.Container = PrivateLib.Create('Frame', {Size = UDim2.new(1, 0, 1, 0), BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(20, 20, 20), ZIndex = Id + 1}, DropDown.OptionsContainer)
+						Option.Indicator = PrivateLib.Create('TextLabel', {Size = UDim2.new(0.95, 0, 1, 0), Position = UDim2.new(0.05, 0, 0, 0), BackgroundTransparency = 1, TextSize = 14, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = Enum.TextXAlignment.Left, Font = Enum.Font.Ubuntu, Text = OptionName}, Option.Container)
+						Option.Button = PrivateLib.Create('TextButton', {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, TextTransparency = 1, ZIndex = 2}, Option.Container)
+						
+						DropDown.Options[Id] = Option
+						
+						Option.Button.MouseButton1Down:Connect(function()
+							DropDown.Event:Fire(OptionName)
+							DropDown.SetValue(OptionName)
+							DropDown.CloseOptions()
+						end)
+					end
+					
+					DropDown.Button.MouseButton1Down:Connect(function()
+						if not DropDown.OptionsOpen then DropDown.OpenOptions()
+						else DropDown.CloseOptions() end end)
+					
+					return DropDown
 				end
 				
 				return Sector
